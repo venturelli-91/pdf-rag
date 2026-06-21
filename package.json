@@ -12,6 +12,8 @@
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "dependencies": {
+    "@lancedb/lancedb": "^0.30.0",
+    "apache-arrow": "^18.1.0",
     "next": "16.2.9",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^2.4.5",
