@@ -39,6 +39,9 @@ yarn-error.log*
 # local document storage
 /.data
 
+# local Claude Code config/docs — never committed
+/.claude
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
