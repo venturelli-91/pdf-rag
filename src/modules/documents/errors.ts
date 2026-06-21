@@ -1,4 +1,8 @@
-export type DocumentUploadErrorCode = "EMPTY" | "TOO_LARGE" | "INVALID_TYPE";
+export type DocumentUploadErrorCode =
+  | "EMPTY"
+  | "TOO_LARGE"
+  | "INVALID_TYPE"
+  | "CORRUPT";
 
 export class DocumentUploadError extends Error {
   code: DocumentUploadErrorCode;

@@ -7,6 +7,7 @@ import {
   PDF_MIME_TYPE,
 } from "./constants";
 import { DocumentUploadError } from "./errors";
+import { assertPdfIsReadable } from "./validation";
 
 const STORAGE_DIR =
   process.env.DOCUMENTS_STORAGE_DIR ??
@@ -54,6 +55,7 @@ export async function persistUpload(file: File): Promise<PersistedDocument> {
 
   const buffer = Buffer.from(await file.arrayBuffer());
   assertContentIsPdf(buffer);
+  await assertPdfIsReadable(buffer);
 
   const id = randomUUID();
   await mkdir(STORAGE_DIR, { recursive: true });
