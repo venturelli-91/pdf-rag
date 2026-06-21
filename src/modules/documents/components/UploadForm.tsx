@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type UploadState =
   | { status: "idle" }
@@ -10,12 +10,13 @@ type UploadState =
 
 export function UploadForm() {
   const [state, setState] = useState<UploadState>({ status: "idle" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = event.currentTarget;
-    const file = (new FormData(form).get("file") as File | null) ?? null;
+    const file = fileInputRef.current?.files?.[0] ?? null;
 
     if (!file || file.size === 0) {
       setState({ status: "error", message: "Select a PDF file first." });
@@ -56,6 +57,7 @@ export function UploadForm() {
         Upload a PDF
       </label>
       <input
+        ref={fileInputRef}
         id="file"
         name="file"
         type="file"
