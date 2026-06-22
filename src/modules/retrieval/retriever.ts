@@ -1,14 +1,8 @@
+import { getRetrievalConfig } from "../config";
 import { generateEmbedding } from "../embeddings";
 import { searchChunks } from "../vector-store";
 import { RetrievalError } from "./errors";
 import type { RetrievalOptions, RetrievedChunk } from "./types";
-
-const DEFAULT_TOP_K = 5;
-
-function getDefaultTopK(): number {
-  const raw = Number(process.env.RETRIEVAL_TOP_K);
-  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_TOP_K;
-}
 
 export async function retrieveRelevantChunks(
   query: string,
@@ -18,7 +12,8 @@ export async function retrieveRelevantChunks(
     return [];
   }
 
-  const topK = options.topK ?? getDefaultTopK();
+  const defaults = getRetrievalConfig();
+  const topK = options.topK ?? defaults.topK;
 
   let queryVector: number[];
   try {
@@ -52,10 +47,10 @@ export async function retrieveRelevantChunks(
     score: result.distance,
   }));
 
-  if (options.scoreThreshold === undefined) {
+  const scoreThreshold = options.scoreThreshold ?? defaults.scoreThreshold;
+  if (scoreThreshold === undefined) {
     return chunks;
   }
 
-  const threshold = options.scoreThreshold;
-  return chunks.filter((chunk) => chunk.score <= threshold);
+  return chunks.filter((chunk) => chunk.score <= scoreThreshold);
 }

@@ -1,9 +1,7 @@
 import type { ParsedDocument } from "@/modules/pdf-parser";
+import { getChunkingConfig } from "../config";
 import { ChunkingError } from "./errors";
 import type { Chunk, ChunkingOptions } from "./types";
-
-const DEFAULT_CHUNK_SIZE = 1000;
-const DEFAULT_CHUNK_OVERLAP = 200;
 
 function splitWithOverlap(
   text: string,
@@ -48,8 +46,9 @@ export function chunkDocument(
   document: ParsedDocument,
   options: ChunkingOptions = {},
 ): Chunk[] {
-  const chunkSize = options.chunkSize ?? DEFAULT_CHUNK_SIZE;
-  const chunkOverlap = options.chunkOverlap ?? DEFAULT_CHUNK_OVERLAP;
+  const defaults = getChunkingConfig();
+  const chunkSize = options.chunkSize ?? defaults.chunkSize;
+  const chunkOverlap = options.chunkOverlap ?? defaults.chunkOverlap;
 
   if (chunkSize <= 0) {
     throw new ChunkingError(

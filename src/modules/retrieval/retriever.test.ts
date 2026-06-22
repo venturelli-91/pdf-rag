@@ -10,6 +10,7 @@ describe("retrieveRelevantChunks", () => {
   afterEach(() => {
     jest.clearAllMocks();
     Reflect.deleteProperty(process.env, "RETRIEVAL_TOP_K");
+    Reflect.deleteProperty(process.env, "RETRIEVAL_SCORE_THRESHOLD");
   });
 
   it("returns an empty array for a blank query without calling embeddings or the vector store", async () => {
@@ -130,6 +131,33 @@ describe("retrieveRelevantChunks", () => {
     const results = await retrieveRelevantChunks("query", {
       scoreThreshold: 0.5,
     });
+
+    expect(results.map((result) => result.text)).toEqual(["close"]);
+  });
+
+  it("uses RETRIEVAL_SCORE_THRESHOLD as the default scoreThreshold when set", async () => {
+    process.env.RETRIEVAL_SCORE_THRESHOLD = "0.5";
+    (generateEmbedding as jest.Mock).mockResolvedValue([0.1]);
+    (searchChunks as jest.Mock).mockResolvedValue([
+      {
+        text: "close",
+        documentId: "d",
+        documentName: "doc.pdf",
+        pageNumber: 1,
+        chunkIndex: 0,
+        distance: 0.1,
+      },
+      {
+        text: "far",
+        documentId: "d",
+        documentName: "doc.pdf",
+        pageNumber: 1,
+        chunkIndex: 1,
+        distance: 0.9,
+      },
+    ]);
+
+    const results = await retrieveRelevantChunks("query");
 
     expect(results.map((result) => result.text)).toEqual(["close"]);
   });

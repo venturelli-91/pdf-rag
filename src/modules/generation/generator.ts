@@ -1,18 +1,10 @@
+import { getOllamaConfig } from "../config";
 import { buildGroundedPrompt } from "../prompt-builder";
 import { GenerationError } from "./errors";
 import type { ContextChunk, GeneratedAnswer, GenerationOptions } from "./types";
 
-const DEFAULT_MODEL = "llama3.2";
 const INSUFFICIENT_EVIDENCE_ANSWER =
   "I don't have enough information in the provided documents to answer this question.";
-
-function getBaseUrl(): string {
-  return process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
-}
-
-function getDefaultModel(): string {
-  return process.env.OLLAMA_GENERATION_MODEL ?? DEFAULT_MODEL;
-}
 
 export async function generateAnswer(
   query: string,
@@ -23,10 +15,11 @@ export async function generateAnswer(
     return { answer: INSUFFICIENT_EVIDENCE_ANSWER, grounded: false };
   }
 
-  const model = options.model ?? getDefaultModel();
+  const ollamaConfig = getOllamaConfig();
+  const model = options.model ?? ollamaConfig.generationModel;
   const prompt = buildGroundedPrompt(query, chunks);
 
-  const response = await fetch(`${getBaseUrl()}/api/generate`, {
+  const response = await fetch(`${ollamaConfig.baseUrl}/api/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

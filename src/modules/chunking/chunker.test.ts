@@ -9,6 +9,26 @@ function buildDocument(pages: string[]): ParsedDocument {
 }
 
 describe("chunkDocument", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(process.env, "CHUNKING_CHUNK_SIZE");
+    Reflect.deleteProperty(process.env, "CHUNKING_CHUNK_OVERLAP");
+  });
+
+  it("uses CHUNKING_CHUNK_SIZE/CHUNKING_CHUNK_OVERLAP as defaults when no options are given", () => {
+    const document = buildDocument(["a".repeat(100)]);
+
+    process.env.CHUNKING_CHUNK_SIZE = "20";
+    process.env.CHUNKING_CHUNK_OVERLAP = "0";
+    const fromEnv = chunkDocument(document);
+
+    const fromOptions = chunkDocument(document, {
+      chunkSize: 20,
+      chunkOverlap: 0,
+    });
+
+    expect(fromEnv).toEqual(fromOptions);
+  });
+
   it("honors a configurable chunk size", () => {
     const document = buildDocument(["a".repeat(100)]);
 

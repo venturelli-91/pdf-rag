@@ -6,7 +6,11 @@ import type { DocumentRecord } from "./types";
 function getManifestPath(): string {
   return (
     process.env.DOCUMENTS_MANIFEST_PATH ??
-    path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "documents.json")
+    path.join(
+      /* turbopackIgnore: true */ process.cwd(),
+      ".data",
+      "documents.json",
+    )
   );
 }
 

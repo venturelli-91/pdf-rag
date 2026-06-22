@@ -1,15 +1,6 @@
+import { getOllamaConfig } from "../config";
 import { EmbeddingError } from "./errors";
 import type { EmbeddingOptions, EmbeddingVector } from "./types";
-
-const DEFAULT_MODEL = "nomic-embed-text";
-
-function getBaseUrl(): string {
-  return process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
-}
-
-function getDefaultModel(): string {
-  return process.env.OLLAMA_EMBEDDING_MODEL ?? DEFAULT_MODEL;
-}
 
 export async function generateEmbeddings(
   texts: string[],
@@ -19,9 +10,10 @@ export async function generateEmbeddings(
     return [];
   }
 
-  const model = options.model ?? getDefaultModel();
+  const ollamaConfig = getOllamaConfig();
+  const model = options.model ?? ollamaConfig.embeddingModel;
 
-  const response = await fetch(`${getBaseUrl()}/api/embed`, {
+  const response = await fetch(`${ollamaConfig.baseUrl}/api/embed`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ model, input: texts }),

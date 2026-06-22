@@ -10,12 +10,30 @@ Pre-scaffold: no application code yet. Architecture, requirements, and backlog a
 
 Next.js + TypeScript, Tailwind, Drizzle ORM, Zod, Ollama (local embeddings + LLM), pgvector/LanceDB. Full rationale: [architecture/recommended-stack.md](./.claude/docs/architecture/recommended-stack.md).
 
+## Configuration
+
+All runtime parameters are configurable via environment variables — no code changes needed. Set them in `.env.local` or your shell before starting the app.
+
+| Variable | Default | Controls |
+|---|---|---|
+| `CHUNKING_CHUNK_SIZE` | `1000` | Max characters per chunk |
+| `CHUNKING_CHUNK_OVERLAP` | `200` | Characters of overlap between consecutive chunks (must be `< CHUNKING_CHUNK_SIZE`) |
+| `RETRIEVAL_TOP_K` | `5` | Number of chunks retrieved per question |
+| `RETRIEVAL_SCORE_THRESHOLD` | unset (no filtering) | Drops retrieved chunks with a distance above this value |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL, used for both embeddings and generation |
+| `OLLAMA_EMBEDDING_MODEL` | `nomic-embed-text` | Ollama model used to embed documents and queries |
+| `OLLAMA_GENERATION_MODEL` | `llama3.2` | Ollama model used to generate answers |
+| `LANCEDB_URI` | `.lancedb` | LanceDB storage path |
+| `DOCUMENTS_STORAGE_DIR` | `.data/uploads` | Where uploaded PDFs are stored on disk |
+| `DOCUMENTS_MANIFEST_PATH` | `.data/documents.json` | Document registry file path |
+
 ## Docs
 
 - [Documentation index](./.claude/docs/README.md)
 - [Backlog](./.claude/docs/backlog.md)
 - [Tasks checklist](./.claude/docs/TASKS.md)
 - [Testing strategy](./.claude/docs/TESTING.md)
+- [Configuration reference](./.claude/docs/configuration.md)
 
 ## License
 
