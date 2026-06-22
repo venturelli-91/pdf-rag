@@ -1,6 +1,7 @@
 import {
   DocumentUploadError,
-  persistUpload,
+  listDocuments,
+  uploadAndIndexDocument,
   uploadedDocumentSchema,
 } from "@/modules/documents";
 import { NextResponse } from "next/server";
@@ -14,11 +15,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const document = await persistUpload(file);
+    const document = await uploadAndIndexDocument(file);
     const body = uploadedDocumentSchema.parse({
       id: document.id,
       originalName: document.originalName,
       size: document.size,
+      status: document.status,
+      chunkCount: document.chunkCount,
+      error: document.error,
     });
     return NextResponse.json(body, { status: 201 });
   } catch (error) {
@@ -27,4 +31,9 @@ export async function POST(request: Request) {
     }
     throw error;
   }
+}
+
+export async function GET() {
+  const documents = await listDocuments();
+  return NextResponse.json({ documents }, { status: 200 });
 }

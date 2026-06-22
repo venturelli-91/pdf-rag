@@ -38,6 +38,7 @@ yarn-error.log*
 
 # local document storage
 /.data
+/.lancedb
 
 # local Claude Code config/docs — never committed
 /.claude

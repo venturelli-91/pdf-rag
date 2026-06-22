@@ -13,3 +13,10 @@ export class DocumentUploadError extends Error {
     this.code = code;
   }
 }
+
+export class DocumentNotFoundError extends Error {
+  constructor(documentId: string) {
+    super(`Document not found: ${documentId}`);
+    this.name = "DocumentNotFoundError";
+  }
+}
