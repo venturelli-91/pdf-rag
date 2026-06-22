@@ -4,7 +4,7 @@ Open PDF RAG is an open-source, local-first application for chatting with PDFs, 
 
 ## Status
 
-Pre-scaffold: no application code yet. Architecture, requirements, and backlog are fully documented under [`.claude/docs/`](./.claude/docs/README.md).
+All 13 functional requirements are implemented (upload, parsing, chunking, embeddings, indexing, retrieval, grounded generation, citations, document lifecycle, session UI, configurable params, API docs). Architecture, requirements, and backlog are fully documented under [`.claude/docs/`](./.claude/docs/README.md).
 
 ## Stack
 
@@ -26,6 +26,10 @@ All runtime parameters are configurable via environment variables — no code ch
 | `LANCEDB_URI` | `.lancedb` | LanceDB storage path |
 | `DOCUMENTS_STORAGE_DIR` | `.data/uploads` | Where uploaded PDFs are stored on disk |
 | `DOCUMENTS_MANIFEST_PATH` | `.data/documents.json` | Document registry file path |
+
+## API Docs
+
+Run `npm run dev` and open `/docs` for an interactive Swagger UI of every API route, generated from JSDoc comments in the route source (no separate spec file to keep in sync). The raw OpenAPI JSON is available at `/api/docs`.
 
 ## Docs
 
