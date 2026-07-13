@@ -31,6 +31,25 @@ All runtime parameters are configurable via environment variables — no code ch
 | `DOCUMENTS_STORAGE_DIR` | `.data/uploads` | Where uploaded PDFs are stored on disk |
 | `DOCUMENTS_MANIFEST_PATH` | `.data/documents.json` | Document registry file path |
 
+## Screenshots
+
+| Home — initial state | Upload validation error | Query validation error |
+|---|---|---|
+| ![Home initial state](./public/screenshots/01-home-initial.png) | ![Upload validation error](./public/screenshots/02-upload-validation-error.png) | ![Query validation error](./public/screenshots/03-query-validation-error.png) |
+
+| Query error surfaced inline | API docs (`/docs`) | Home — mobile viewport |
+|---|---|---|
+| ![Query error surfaced inline](./public/screenshots/04-query-answer-error.png) | ![API docs](./public/screenshots/05-api-docs.png) | ![Home mobile viewport](./public/screenshots/06-home-mobile.png) |
+
+### UX notes (Nielsen heuristic pass)
+
+Captured with the Playwright MCP against a running `npm run dev`, then reviewed against Nielsen's 10 usability heuristics. Real, actionable findings:
+
+- **Match between system and the real world (H2):** the browser tab still said "Create Next App" (leftover scaffold metadata) — fixed in `src/app/layout.tsx`.
+- **Help users recognize/diagnose errors (H9):** errors (`Select a PDF file first.`, `Failed to embed the query for retrieval.`) render as plain red text with no `role="alert"`/`aria-live`, so screen readers don't announce them automatically — not fixed yet, tracked as a follow-up.
+- **Consistency and standards (H4):** the native file-input control renders in the browser's OS locale (e.g. `Escolher arquivo` in a pt-BR environment) while the rest of the UI copy is English-only — a real inconsistency, but not one `accept`/labels can fix without replacing the native control with a custom-styled one; not in scope here.
+- **Visibility of system status (H1):** "Uploading…"/"Thinking…" states are visible on-screen — good — but suffer the same missing-`aria-live` gap as above for assistive tech.
+
 ## API Docs
 
 Run `npm run dev` and open `/docs` for an interactive Swagger UI of every API route, generated from JSDoc comments in the route source (no separate spec file to keep in sync). The raw OpenAPI JSON is available at `/api/docs`.
