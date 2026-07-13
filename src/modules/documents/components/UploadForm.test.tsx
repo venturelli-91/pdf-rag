@@ -33,6 +33,16 @@ describe("UploadForm", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows the chosen file name after selecting a file", async () => {
+    const user = userEvent.setup();
+    render(<UploadForm />);
+
+    const input = screen.getByLabelText(/upload a pdf/i);
+    await user.upload(input, buildPdfFile());
+
+    expect(await screen.findByText("report.pdf")).toBeInTheDocument();
+  });
+
   it("shows a success message after a successful upload", async () => {
     mockFetchResponse(201, { id: "abc", originalName: "report.pdf", size: 10 });
 

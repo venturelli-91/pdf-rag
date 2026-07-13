@@ -46,9 +46,9 @@ All runtime parameters are configurable via environment variables — no code ch
 Captured with the Playwright MCP against a running `npm run dev`, then reviewed against Nielsen's 10 usability heuristics. Real, actionable findings:
 
 - **Match between system and the real world (H2):** the browser tab still said "Create Next App" (leftover scaffold metadata) — fixed in `src/app/layout.tsx`.
-- **Help users recognize/diagnose errors (H9):** errors (`Select a PDF file first.`, `Failed to embed the query for retrieval.`) render as plain red text with no `role="alert"`/`aria-live`, so screen readers don't announce them automatically — not fixed yet, tracked as a follow-up.
-- **Consistency and standards (H4):** the native file-input control renders in the browser's OS locale (e.g. `Escolher arquivo` in a pt-BR environment) while the rest of the UI copy is English-only — a real inconsistency, but not one `accept`/labels can fix without replacing the native control with a custom-styled one; not in scope here.
-- **Visibility of system status (H1):** "Uploading…"/"Thinking…" states are visible on-screen — good — but suffer the same missing-`aria-live` gap as above for assistive tech.
+- **Help users recognize/diagnose errors (H9):** errors now render with `role="alert"` (`UploadForm.tsx`, `QuerySession.tsx`), so screen readers announce them as soon as they appear.
+- **Consistency and standards (H4):** the native file-input control used to render in the browser's OS locale (e.g. `Escolher arquivo` in a pt-BR environment). Fixed by visually hiding the native input (`sr-only`, still keyboard/label-accessible) behind a custom "Choose file" trigger button and a filename `<span>`, both always in English.
+- **Visibility of system status (H1):** "Uploading…"/"Thinking…" and the success message now sit in `aria-live="polite"` regions, so assistive tech announces status changes without waiting for focus to move.
 
 ## API Docs
 

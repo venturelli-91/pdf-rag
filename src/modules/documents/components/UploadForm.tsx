@@ -10,6 +10,7 @@ type UploadState =
 
 export function UploadForm() {
   const [state, setState] = useState<UploadState>({ status: "idle" });
+  const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -42,6 +43,7 @@ export function UploadForm() {
     }
 
     setState({ status: "success", fileName: file.name });
+    setFileName(null);
     form.reset();
   }
 
@@ -56,28 +58,47 @@ export function UploadForm() {
       >
         Upload a PDF
       </label>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:text-zinc-300"
+        >
+          Choose file
+        </button>
+        <span className="text-sm text-zinc-500">
+          {fileName ?? "No file chosen"}
+        </span>
+      </div>
       <input
         ref={fileInputRef}
         id="file"
         name="file"
         type="file"
         accept="application/pdf"
-        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700"
+        className="sr-only"
+        onChange={(event) =>
+          setFileName(event.target.files?.[0]?.name ?? null)
+        }
       />
       <button
         type="submit"
         disabled={state.status === "uploading"}
+        aria-live="polite"
         className="rounded-full bg-foreground px-5 py-2 text-sm font-medium text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
       >
         {state.status === "uploading" ? "Uploading…" : "Upload"}
       </button>
       {state.status === "success" && (
-        <p className="text-sm text-green-600 dark:text-green-400">
+        <p
+          aria-live="polite"
+          className="text-sm text-green-600 dark:text-green-400"
+        >
           {state.fileName} uploaded successfully.
         </p>
       )}
       {state.status === "error" && (
-        <p className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       )}

@@ -92,7 +92,7 @@ export function QuerySession() {
           </button>
         </div>
         {blankError && (
-          <p className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
             Type a question first.
           </p>
         )}
@@ -111,10 +111,12 @@ export function QuerySession() {
               {turn.question}
             </p>
             {turn.status === "loading" && (
-              <p className="text-sm text-zinc-500">Thinking…</p>
+              <p aria-live="polite" className="text-sm text-zinc-500">
+                Thinking…
+              </p>
             )}
             {turn.status === "error" && (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
                 {turn.error}
               </p>
             )}
