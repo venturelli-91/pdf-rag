@@ -23,6 +23,10 @@ All runtime parameters are configurable via environment variables — no code ch
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL, used for both embeddings and generation |
 | `OLLAMA_EMBEDDING_MODEL` | `nomic-embed-text` | Ollama model used to embed documents and queries |
 | `OLLAMA_GENERATION_MODEL` | `llama3.2` | Ollama model used to generate answers |
+| `GENERATION_PROVIDER` | `deepseek` | Which LLM answers questions: `ollama` (local, free) or `deepseek` (hosted, paid) |
+| `DEEPSEEK_API_KEY` | unset | DeepSeek API key, required when `GENERATION_PROVIDER=deepseek` |
+| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com` | DeepSeek API base URL |
+| `DEEPSEEK_MODEL` | `deepseek-chat` | DeepSeek model used to generate answers |
 | `LANCEDB_URI` | `.lancedb` | LanceDB storage path |
 | `DOCUMENTS_STORAGE_DIR` | `.data/uploads` | Where uploaded PDFs are stored on disk |
 | `DOCUMENTS_MANIFEST_PATH` | `.data/documents.json` | Document registry file path |

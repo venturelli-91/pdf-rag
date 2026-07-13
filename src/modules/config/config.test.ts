@@ -1,5 +1,7 @@
 import {
   getChunkingConfig,
+  getDeepseekConfig,
+  getGenerationProvider,
   getOllamaConfig,
   getRetrievalConfig,
 } from "./config";
@@ -12,6 +14,10 @@ const ENV_KEYS = [
   "OLLAMA_BASE_URL",
   "OLLAMA_EMBEDDING_MODEL",
   "OLLAMA_GENERATION_MODEL",
+  "GENERATION_PROVIDER",
+  "DEEPSEEK_API_KEY",
+  "DEEPSEEK_BASE_URL",
+  "DEEPSEEK_MODEL",
 ];
 
 describe("config", () => {
@@ -99,6 +105,52 @@ describe("config", () => {
         baseUrl: "http://ollama.internal:1234",
         embeddingModel: "custom-embed",
         generationModel: "custom-llm",
+      });
+    });
+  });
+
+  describe("getGenerationProvider", () => {
+    it("defaults to deepseek when unset", () => {
+      expect(getGenerationProvider()).toBe("deepseek");
+    });
+
+    it("reads an explicit ollama value from env", () => {
+      process.env.GENERATION_PROVIDER = "ollama";
+
+      expect(getGenerationProvider()).toBe("ollama");
+    });
+
+    it("reads an explicit deepseek value from env", () => {
+      process.env.GENERATION_PROVIDER = "deepseek";
+
+      expect(getGenerationProvider()).toBe("deepseek");
+    });
+
+    it("falls back to the default for an invalid value", () => {
+      process.env.GENERATION_PROVIDER = "openai";
+
+      expect(getGenerationProvider()).toBe("deepseek");
+    });
+  });
+
+  describe("getDeepseekConfig", () => {
+    it("defaults baseUrl and model, and an empty apiKey, when unset", () => {
+      expect(getDeepseekConfig()).toEqual({
+        apiKey: "",
+        baseUrl: "https://api.deepseek.com",
+        model: "deepseek-chat",
+      });
+    });
+
+    it("reads all three from env vars", () => {
+      process.env.DEEPSEEK_API_KEY = "sk-test";
+      process.env.DEEPSEEK_BASE_URL = "https://deepseek.internal";
+      process.env.DEEPSEEK_MODEL = "deepseek-reasoner";
+
+      expect(getDeepseekConfig()).toEqual({
+        apiKey: "sk-test",
+        baseUrl: "https://deepseek.internal",
+        model: "deepseek-reasoner",
       });
     });
   });

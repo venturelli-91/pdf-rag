@@ -1,4 +1,10 @@
-import type { ChunkingConfig, OllamaConfig, RetrievalConfig } from "./types";
+import type {
+  ChunkingConfig,
+  DeepseekConfig,
+  GenerationProvider,
+  OllamaConfig,
+  RetrievalConfig,
+} from "./types";
 
 const DEFAULT_CHUNK_SIZE = 1000;
 const DEFAULT_CHUNK_OVERLAP = 200;
@@ -6,6 +12,9 @@ const DEFAULT_TOP_K = 5;
 const DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434";
 const DEFAULT_EMBEDDING_MODEL = "nomic-embed-text";
 const DEFAULT_GENERATION_MODEL = "llama3.2";
+const DEFAULT_GENERATION_PROVIDER: GenerationProvider = "deepseek";
+const DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com";
+const DEFAULT_DEEPSEEK_MODEL = "deepseek-chat";
 
 function parsePositiveInt(raw: string | undefined, fallback: number): number {
   const value = Number(raw);
@@ -55,5 +64,20 @@ export function getOllamaConfig(): OllamaConfig {
       process.env.OLLAMA_EMBEDDING_MODEL ?? DEFAULT_EMBEDDING_MODEL,
     generationModel:
       process.env.OLLAMA_GENERATION_MODEL ?? DEFAULT_GENERATION_MODEL,
+  };
+}
+
+export function getGenerationProvider(): GenerationProvider {
+  const raw = process.env.GENERATION_PROVIDER;
+  return raw === "ollama" || raw === "deepseek"
+    ? raw
+    : DEFAULT_GENERATION_PROVIDER;
+}
+
+export function getDeepseekConfig(): DeepseekConfig {
+  return {
+    apiKey: process.env.DEEPSEEK_API_KEY ?? "",
+    baseUrl: process.env.DEEPSEEK_BASE_URL ?? DEFAULT_DEEPSEEK_BASE_URL,
+    model: process.env.DEEPSEEK_MODEL ?? DEFAULT_DEEPSEEK_MODEL,
   };
 }

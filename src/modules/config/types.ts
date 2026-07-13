@@ -13,3 +13,11 @@ export interface OllamaConfig {
   embeddingModel: string;
   generationModel: string;
 }
+
+export type GenerationProvider = "ollama" | "deepseek";
+
+export interface DeepseekConfig {
+  apiKey: string;
+  baseUrl: string;
+  model: string;
+}

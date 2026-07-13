@@ -1,4 +1,7 @@
-export type GenerationErrorCode = "REQUEST_FAILED" | "INVALID_RESPONSE";
+export type GenerationErrorCode =
+  | "REQUEST_FAILED"
+  | "INVALID_RESPONSE"
+  | "MISSING_API_KEY";
 
 export class GenerationError extends Error {
   code: GenerationErrorCode;

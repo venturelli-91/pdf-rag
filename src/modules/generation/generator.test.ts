@@ -23,6 +23,10 @@ describe("generateAnswer", () => {
     jest.restoreAllMocks();
     Reflect.deleteProperty(process.env, "OLLAMA_BASE_URL");
     Reflect.deleteProperty(process.env, "OLLAMA_GENERATION_MODEL");
+    Reflect.deleteProperty(process.env, "GENERATION_PROVIDER");
+    Reflect.deleteProperty(process.env, "DEEPSEEK_API_KEY");
+    Reflect.deleteProperty(process.env, "DEEPSEEK_BASE_URL");
+    Reflect.deleteProperty(process.env, "DEEPSEEK_MODEL");
   });
 
   it("returns an honest uncertainty answer without calling the LLM when there are no chunks", async () => {
@@ -33,6 +37,10 @@ describe("generateAnswer", () => {
     expect(result.grounded).toBe(false);
     expect(result.answer).toMatch(/don't have enough information/i);
     expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  beforeEach(() => {
+    process.env.GENERATION_PROVIDER = "ollama";
   });
 
   it("sends the grounded prompt to the local Ollama generate endpoint using the default model", async () => {
@@ -101,5 +109,96 @@ describe("generateAnswer", () => {
     const result = await generateAnswer("query", chunks);
 
     expect(result.answer).toBe("answer with padding");
+  });
+});
+
+describe("generateAnswer (deepseek)", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+    Reflect.deleteProperty(process.env, "GENERATION_PROVIDER");
+    Reflect.deleteProperty(process.env, "DEEPSEEK_API_KEY");
+    Reflect.deleteProperty(process.env, "DEEPSEEK_BASE_URL");
+    Reflect.deleteProperty(process.env, "DEEPSEEK_MODEL");
+  });
+
+  beforeEach(() => {
+    process.env.GENERATION_PROVIDER = "deepseek";
+    process.env.DEEPSEEK_API_KEY = "sk-test";
+  });
+
+  it("sends the grounded prompt to the DeepSeek chat completions endpoint using the default model", async () => {
+    mockFetchOnce({
+      ok: true,
+      json: async () => ({
+        choices: [{ message: { content: "Photosynthesis is a process..." } }],
+      }),
+    });
+
+    const result = await generateAnswer("What is photosynthesis?", chunks);
+
+    expect(result).toEqual({
+      answer: "Photosynthesis is a process...",
+      grounded: true,
+    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.deepseek.com/chat/completions",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Authorization: "Bearer sk-test",
+        }),
+      }),
+    );
+    const [, requestInit] = (global.fetch as jest.Mock).mock.calls[0];
+    const body = JSON.parse(requestInit.body);
+    expect(body.model).toBe("deepseek-chat");
+    expect(body.stream).toBe(false);
+    expect(body.messages).toEqual([
+      { role: "system", content: expect.stringMatching(/only.*context/i) },
+      {
+        role: "user",
+        content: expect.stringContaining("What is photosynthesis?"),
+      },
+    ]);
+  });
+
+  it("uses a custom model when provided via options", async () => {
+    mockFetchOnce({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: "answer" } }] }),
+    });
+
+    await generateAnswer("query", chunks, { model: "custom-model" });
+
+    const [, requestInit] = (global.fetch as jest.Mock).mock.calls[0];
+    expect(JSON.parse(requestInit.body)).toMatchObject({
+      model: "custom-model",
+    });
+  });
+
+  it("throws MISSING_API_KEY without calling fetch when DEEPSEEK_API_KEY is unset", async () => {
+    Reflect.deleteProperty(process.env, "DEEPSEEK_API_KEY");
+    global.fetch = jest.fn() as unknown as typeof fetch;
+
+    await expect(generateAnswer("query", chunks)).rejects.toMatchObject({
+      code: "MISSING_API_KEY",
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("throws a GenerationError when the request fails", async () => {
+    mockFetchOnce({ ok: false, status: 500, json: async () => ({}) });
+
+    await expect(generateAnswer("query", chunks)).rejects.toMatchObject({
+      code: "REQUEST_FAILED",
+    });
+  });
+
+  it("throws a GenerationError when the response has no answer text", async () => {
+    mockFetchOnce({ ok: true, json: async () => ({ choices: [] }) });
+
+    await expect(generateAnswer("query", chunks)).rejects.toMatchObject({
+      code: "INVALID_RESPONSE",
+    });
   });
 });
