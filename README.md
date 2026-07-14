@@ -41,7 +41,7 @@ All runtime parameters are configurable via environment variables — no code ch
 |---|---|---|
 | ![Query error surfaced inline](./public/screenshots/04-query-answer-error.png) | ![API docs](./public/screenshots/05-api-docs.png) | ![Home mobile viewport](./public/screenshots/06-home-mobile.png) |
 
-Run `npm run lint:a11y` (`npm run dev` must already be running) for an automated WCAG2AA check via [Pa11y](https://pa11y.org/) — config in `.pa11yci.json`. Currently: `/` passes clean; `/docs` has 8 contrast warnings, all from `swagger-ui-dist`'s own default styling, not app code.
+Run `npm run lint:a11y` (`npm run dev` must already be running) for an automated WCAG2AA check via [Pa11y](https://pa11y.org/) — config in `.pa11yci.json`. Both `/` and `/docs` currently pass with 0 errors; `/docs`'s 8 original contrast failures (all in `swagger-ui-dist`'s default theme) are fixed via a small scoped override, `src/app/docs/docs-a11y-overrides.css`, imported after the vendor stylesheet.
 
 ### UX notes (Nielsen heuristic pass)
 

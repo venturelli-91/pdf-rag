@@ -1,0 +1,23 @@
+.swagger-ui .info .title small.version-stamp {
+  background-color: #5d8200;
+}
+
+.swagger-ui .info .title small {
+  background: #707785;
+}
+
+.swagger-ui .info hgroup a .url {
+  color: #3077c9;
+}
+
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background-color: #05884c;
+}
+
+.swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background-color: #2a78c7;
+}
+
+.swagger-ui .opblock.opblock-delete .opblock-summary-method {
+  background-color: #e42929;
+}

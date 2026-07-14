@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import "swagger-ui-dist/swagger-ui.css";
+import "./docs-a11y-overrides.css";
 
 export default function DocsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
