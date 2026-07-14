@@ -41,6 +41,8 @@ All runtime parameters are configurable via environment variables — no code ch
 |---|---|---|
 | ![Query error surfaced inline](./public/screenshots/04-query-answer-error.png) | ![API docs](./public/screenshots/05-api-docs.png) | ![Home mobile viewport](./public/screenshots/06-home-mobile.png) |
 
+Run `npm run lint:a11y` (`npm run dev` must already be running) for an automated WCAG2AA check via [Pa11y](https://pa11y.org/) — config in `.pa11yci.json`. Currently: `/` passes clean; `/docs` has 8 contrast warnings, all from `swagger-ui-dist`'s own default styling, not app code.
+
 ### UX notes (Nielsen heuristic pass)
 
 Captured with the Playwright MCP against a running `npm run dev`, then reviewed against Nielsen's 10 usability heuristics. Real, actionable findings:
